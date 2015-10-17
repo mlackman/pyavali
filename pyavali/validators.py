@@ -11,7 +11,14 @@ class Not(object):
   def __call__(self, value):
     return not self._validator(value)
 
+def noneValue(value):
+  """None value validator
 
+  NoneValue(None) returns True
+  NoneValue(1) returns False
+  Not(NoneValue(None)) return False
+  """
+  return value == None
 
 def empty(value):
   value = value or []

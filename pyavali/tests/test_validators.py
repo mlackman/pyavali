@@ -1,5 +1,6 @@
 import unittest
-from ..validators import empty, Not
+from ..validators import empty, Not, noneValue
+
 
 class TestEmpty(unittest.TestCase):
 
@@ -14,6 +15,14 @@ class TestEmpty(unittest.TestCase):
 
   def test_it_returns_true_for_empty_string(self):
     self.assertEquals(True, empty(""))
+
+class TestNoneValue(unittest.TestCase):
+
+  def test_it_returns_true_for_none(self):
+    self.assertTrue(noneValue(None))
+
+  def test_it_returns_false_for_value(self):
+    self.assertFalse(noneValue(1))
 
 
 class TestNotCompositeValidtor(unittest.TestCase):
