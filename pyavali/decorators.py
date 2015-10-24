@@ -1,4 +1,5 @@
 import pyavali
+from .argumentpickers import ArgumentByIndexPicker
 
 class validate_param(object):
   """Validates a function argument by calling validator with the argument.
@@ -15,23 +16,45 @@ class validate_param(object):
   """
 
   def __init__(self, argument_index, validator, message=None):
-    self._argument_index = argument_index
-    self._validator = validator
+    self._argument_picker = ArgumentByIndexPicker(argument_index)
+    self._validator = Validator(validator, message)
     self._message = message
 
   def __call__(self, func):
     def decorator_callable(*args, **kwargs):
-      argument = self._get_argument(func, *args)
-      if self._validate(argument) == False:
-        self._raise_validation_failed(argument)
+      argument = self._argument_picker.argument(func, *args)
+      self._validator.validate(argument)
       return func(*args, **kwargs)
 
     return decorator_callable
 
-  def _get_argument(self, func, *args):
-    if len(args) <= self._argument_index:
-      raise RuntimeError("Validated argument index %d not in decorated method '%s'" % (self._argument_index, func.__name__))
-    return args[self._argument_index]
+class validate(object):
+  """Validates a function argument by calling validator with the argument.
+
+  @validate("width", int, "must be int")
+  def foo(width):
+    ...
+
+  argument_name - Name of the argument to be validated
+  validator - Callable, which takes the argument.
+  message - Message used in exception if validation fails
+  """
+  def __init__(self, argument_name, validator, message=None):
+    pass
+
+  def __call__(self, func):
+    pass
+
+class Validator(object):
+
+  def __init__(self, validator, message=None):
+    self._validator = validator
+    self._message = message
+    self._argument_index = 0
+
+  def validate(self, argument):
+    if self._validate(argument) == False:
+      self._raise_validation_failed(argument)
 
   def _validate(self, argument):
     try:

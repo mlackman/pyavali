@@ -67,7 +67,7 @@ class TestPyavali(unittest.TestCase):
     @validate_param(0, self.callable)
     def method(): pass;
 
-    self.assertRaises(RuntimeError, method)
+    self.assertRaises(Exception, method)
 
 
 
