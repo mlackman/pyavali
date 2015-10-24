@@ -26,7 +26,6 @@ class TestPyavali(unittest.TestCase):
     self.callable = Callable()
 
   def test_it_calls_callable_with_argument_given(self):
-
     @validate(0, self.callable)
     def method(first_param): pass;
 

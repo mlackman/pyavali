@@ -1,22 +1,28 @@
 import pyavali
-from .argumentpickers import ArgumentByIndexPicker
+from .argumentpickers import create_argument_picker
 
 class validate(object):
   """Validates a function argument by calling validator with the argument.
 
-  @validate_param(0, int)
+  @validate(0, int)
   def foo(param):
     ...
 
-  argument_index - Index of the arguments in args array.
+  or
+
+  @validate("param", int, "must be int")
+  def foo(param)
+    ...
+
+  argument_index_or_name - Index of the arguments in args array or name of the argument
   validator - Callable, which takes the param
   message - Message set to the raised exception
 
   Raises ValidatorException if validator returned false or raised error
   """
 
-  def __init__(self, argument_index, validator, message=None):
-    self._argument_picker = ArgumentByIndexPicker(argument_index)
+  def __init__(self, argument_index_or_name, validator, message=None):
+    self._argument_picker = create_argument_picker(argument_index_or_name)
     self._validator = Validator(validator, message)
     self._message = message
 

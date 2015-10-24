@@ -1,5 +1,11 @@
 import inspect
 
+def create_argument_picker(argument_index_or_name):
+  if isinstance(argument_index_or_name, str):
+    return ArgumentByNamePicker(argument_index_or_name)
+  else:
+    return ArgumentByIndexPicker(argument_index_or_name)
+
 class ArgumentByIndexPicker(object):
 
   def __init__(self, index:int):
