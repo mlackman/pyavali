@@ -7,21 +7,24 @@ class TestArgumentByIndexPicker(unittest.TestCase):
   def test_it_picks_first_argument(self):
     picker = ArgumentByIndexPicker(0)
     args = (1,2,3,4)
+    kwargs = {}
     def func(a,b,c,d): pass
-    self.assertEquals(1, picker.argument(func, *args))
+    self.assertEquals(1, picker.argument(func, *args, **kwargs))
 
   def test_it_picks_last_argument(self):
     picker = ArgumentByIndexPicker(3)
     args = (1,2,3,4)
+    kwargs = {}
     def func(a,b,c,d): pass
-    self.assertEquals(4, picker.argument(func, *args))
+    self.assertEquals(4, picker.argument(func, *args, **kwargs))
 
   def test_it_raises_error_when_argument_index_out_of_bounds(self):
     picker = ArgumentByIndexPicker(0)
     def func(): pass
     args = ()
+    kwargs = {}
     with self.assertRaises(ArgumentByIndexError) as cm:
-      picker.argument(func, *args)
+      picker.argument(func, *args, **kwargs)
     self.assertEquals(cm.exception.message, "Tried to pick argument with index 0 from 'func', but it takes 0 arguments")
 
 

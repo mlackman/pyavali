@@ -1,7 +1,7 @@
 import pyavali
 from .argumentpickers import ArgumentByIndexPicker
 
-class validate_param(object):
+class validate(object):
   """Validates a function argument by calling validator with the argument.
 
   @validate_param(0, int)
@@ -28,22 +28,8 @@ class validate_param(object):
 
     return decorator_callable
 
-class validate(object):
-  """Validates a function argument by calling validator with the argument.
-
-  @validate("width", int, "must be int")
-  def foo(width):
-    ...
-
-  argument_name - Name of the argument to be validated
-  validator - Callable, which takes the argument.
-  message - Message used in exception if validation fails
-  """
-  def __init__(self, argument_name, validator, message=None):
-    pass
-
-  def __call__(self, func):
-    pass
+class validate_param(validate):
+  pass
 
 class Validator(object):
 

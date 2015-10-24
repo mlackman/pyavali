@@ -1,6 +1,6 @@
 import unittest
 
-from ..decorators import validate_param
+from ..decorators import validate_param, validate
 import pyavali
 
 class Callable(object):
@@ -27,7 +27,7 @@ class TestPyavali(unittest.TestCase):
 
   def test_it_calls_callable_with_argument_given(self):
 
-    @validate_param(0, self.callable)
+    @validate(0, self.callable)
     def method(first_param): pass;
 
     method("parameter")
@@ -35,21 +35,27 @@ class TestPyavali(unittest.TestCase):
     self.assertEquals("parameter", self.callable.parameter_received)
 
   def test_it_returns_decorated_function_return_value(self):
-    @validate_param(0, self.callable)
+    @validate(0, self.callable)
+    def method(param): return 5;
+
+    self.assertEquals(5, method(""))
+
+  def test_validating_with_parameter_name(self):
+    @validate("param", self.callable)
     def method(param): return 5;
 
     self.assertEquals(5, method(""))
 
   def test_it_raises_validation_failed_exception(self):
     callable_which_returns_false = Callable(returns=False)
-    @validate_param(0, callable_which_returns_false)
+    @validate(0, callable_which_returns_false)
     def method(first_param): pass;
 
     self.assertRaises(pyavali.ValidationFailed, method, "")
 
   def test_it_sets_message_to_exception_if_set(self):
     callable_which_returns_false = Callable(returns=False)
-    @validate_param(0, callable_which_returns_false, "Message")
+    @validate(0, callable_which_returns_false, "Message")
     def method(first_param): pass;
 
     exception = call(method, "")
@@ -64,15 +70,10 @@ class TestPyavali(unittest.TestCase):
     self.assertRaises(pyavali.ValidationFailed, method, "")
 
   def test_it_raises_error_when_validator_tries_to_validate_non_existing_argument(self):
-    @validate_param(0, self.callable)
+    @validate(0, self.callable)
     def method(): pass;
 
     self.assertRaises(Exception, method)
-
-
-
-
-
 
 if __name__ == '__main__':
   unittest.main()
