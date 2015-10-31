@@ -20,11 +20,18 @@ class And(object):
   def __init__(self, *args):
     self._validators = args
 
+  def message(self, value):
+    validator = self._failing_validator(value)
+    if hasattr(validator, 'message'):
+      return validator.message(value)
+
   def __call__(self, value):
-    for validator in self._validators:
-      if not validator(value):
-        return False
-    return True
+    return self._failing_validator(value) == None
+
+  def _failing_validator(self, value):
+     for validator in self._validators:
+       if not validator(value):
+         return validator
 
 class Range(object):
   "Range validation min <= validated value <= max"
@@ -37,14 +44,13 @@ class Range(object):
     """
     self._min = min
     self._max = max
-    self._template= Template(message or "must be in range [$min, $max]")
+    self._template= Template(message or "must be in range [$min, $max], got $value")
 
   def __call__(self, value):
     return self._min <= value <= self._max
 
-  @property
-  def message(self):
-    return self._template.safe_substitute(min=self._min, max=self._max)
+  def message(self, value):
+    return self._template.safe_substitute(min=self._min, max=self._max, value=str(value))
 
 class Validate(object):
   """Custom validator which takes callable like lambda and has a message for validation"""
@@ -58,8 +64,7 @@ class Validate(object):
   def __call__(self, value):
     return self._validator(value)
 
-  @property
-  def message(self):
+  def message(self, value):
     return self._message
 
 def noneValue(value):

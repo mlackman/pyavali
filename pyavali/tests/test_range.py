@@ -20,4 +20,4 @@ class TestRange(unittest.TestCase):
     self.assertFalse(self.range(2))
 
   def test_it_has_default_message(self):
-    self.assertEquals("must be in range [-1, 1]", self.range.message)
+    self.assertEquals("must be in range [-1, 1], got 5", self.range.message(5))

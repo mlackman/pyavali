@@ -22,11 +22,13 @@ class validate(object):
   """
 
   def __init__(self, argument_index_or_name, validator, message=None):
+    self._argument_name = str(argument_index_or_name)
     self._argument_picker = create_argument_picker(argument_index_or_name)
-    self._validator = Validator(validator, message)
+    self._validator = validator
     self._message = message
 
   def __call__(self, func):
+    self._validator = Validator(self._validator, func.__name__, self._argument_name, self._message)
     def decorator_callable(*args, **kwargs):
       argument = self._argument_picker.argument(func, *args)
       self._validator.validate(argument)
@@ -39,10 +41,12 @@ class validate_param(validate):
 
 class Validator(object):
 
-  def __init__(self, validator, message=None):
+  def __init__(self, validator, function_name, argument_name, message=None):
     self._validator = validator
     self._message = message
+    self._argument_name = argument_name
     self._argument_index = 0
+    self._function_name = function_name
 
   def validate(self, argument):
     if self._validate(argument) == False:
@@ -58,6 +62,10 @@ class Validator(object):
     message = None
     if self._message:
       message = self._message.format(argument)
+    elif hasattr(self._validator, "message"):
+      message = self._validator.message(argument)
+      message = "validation failed for '%s': '%s' %s" % (self._function_name, self._argument_name, message)
+
     raise pyavali.ValidationFailed(argument, self._argument_index, message)
 
 

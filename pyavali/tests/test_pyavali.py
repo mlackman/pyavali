@@ -4,6 +4,7 @@ from ..decorators import validate_param, validate
 from ..validators import And, Range, Validate
 import pyavali
 
+
 class Callable(object):
   def __init__(self, returns=None, raises=None):
     self.returns = returns
@@ -78,24 +79,21 @@ class TestPyavali(unittest.TestCase):
 
 class TestComplexValidation(unittest.TestCase):
 
-  @validate("width", And(Validate(int, "must be integer"), Range(min=5, max=10)))
+  @validate("width", And(Validate(lambda value: isinstance(value, int), "must be integer"), Range(min=5, max=10)))
   def validated_func(self, width): pass
 
-  @validate(1, Validate(int, "must be integer"))
+  @validate(1, Validate(lambda value: isinstance(value, int), "must be integer"))
   def other_validated_func(self, width): pass
 
   def test_it_raises_error_when_not_integer(self):
     with self.assertRaises(pyavali.ValidationFailed) as cm:
-      self.validated_func("2")
+      self.validated_func("a")
     self.assertEquals(cm.exception.message, "validation failed for 'validated_func': 'width' must be integer")
 
   def test_it_raises_error_with_message_when_argument_validated_by_index(self):
     with self.assertRaises(pyavali.ValidationFailed) as cm:
       self.other_validated_func("2")
     self.assertEquals(cm.exception.message, "validation failed for 'validated_func': argument at 1 must be integer")
-
-
-
 
 if __name__ == '__main__':
   unittest.main()
