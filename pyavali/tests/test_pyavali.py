@@ -1,7 +1,7 @@
 import unittest
 
 from ..decorators import validate_param, validate
-from ..validators import And, Range, Validate
+from ..validators import And, Range, Validate, Not, noneValue
 import pyavali
 
 
@@ -94,6 +94,17 @@ class TestComplexValidation(unittest.TestCase):
     with self.assertRaises(pyavali.ValidationFailed) as cm:
       self.other_validated_func("2")
     self.assertEquals(cm.exception.message, "validation failed for 'validated_func': argument at 1 must be integer")
+
+class TestStackingValidator(unittest.TestCase):
+
+  @validate("param2", Not(noneValue))
+  @validate("param1", Not(noneValue))
+  def method(self, param1, param2):
+    pass
+
+  def test_stacking_works(self):
+    # fails if stacking does not work
+    self.method(1,2)
 
 if __name__ == '__main__':
   unittest.main()

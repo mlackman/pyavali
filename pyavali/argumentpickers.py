@@ -42,11 +42,11 @@ class ArgumentByNamePicker(object):
     raise ArgumentByNameError(self._argument_name, func.__name__)
 
   def _argument_index(self, func):
-    argument_names, _, _, _  = inspect.getargspec(func)
-    if self._argument_name in argument_names:
-      return argument_names.index(self._argument_name)
-    else:
-      return -1
+    signature  = inspect.signature(func)
+    for index, param_name in enumerate(signature.parameters):
+      if self._argument_name == param_name:
+        return index
+    return -1
 
 class ArgumentByIndexError(Exception):
 

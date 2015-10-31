@@ -1,3 +1,4 @@
+from functools import wraps
 import pyavali
 from .argumentpickers import create_argument_picker
 
@@ -29,6 +30,8 @@ class validate(object):
 
   def __call__(self, func):
     self._validator = Validator(self._validator, func.__name__, self._argument_name, self._message)
+
+    @wraps(func)
     def decorator_callable(*args, **kwargs):
       argument = self._argument_picker.argument(func, *args)
       self._validator.validate(argument)
