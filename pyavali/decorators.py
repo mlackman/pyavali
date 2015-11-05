@@ -33,7 +33,7 @@ class validate(object):
 
     @wraps(func)
     def decorator_callable(*args, **kwargs):
-      argument = self._argument_picker.argument(func, *args)
+      argument = self._argument_picker.argument(func, *args, **kwargs)
       self._validator.validate(argument)
       return func(*args, **kwargs)
 
