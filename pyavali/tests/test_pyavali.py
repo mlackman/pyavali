@@ -118,6 +118,10 @@ class TestValidatingObjectType(unittest.TestCase):
   def test_when_none_is_allowed_it_does_not_raise_exception(self):
     self.function_with_none(None)
 
+  def test_it_accepts_object_inheriting_the_expected_type(self):
+    class myint(int): pass
+    self.function(myint())
+
 
 
 class TestStackingValidator(unittest.TestCase):

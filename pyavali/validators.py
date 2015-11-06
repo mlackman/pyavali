@@ -34,7 +34,7 @@ class And(object):
          return validator
 
 class Is(object):
-  "Validates that object is given type"
+  "Validates that object is given type. Note that expected_type can be also base class"
 
   def __init__(self, expected_type, none_allowed = False, message=None):
     self._template = Template(message or "must be '$expected_type', got type '$value_type'")
@@ -44,7 +44,7 @@ class Is(object):
   def __call__(self, value):
     if self._none_allowed and value == None:
       return True
-    return type(value) == self._expected_type
+    return isinstance(value, self._expected_type)
 
   def message(self, value):
     return self._template.safe_substitute(expected_type=self._expected_type.__name__, value_type=type(value).__name__)
