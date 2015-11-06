@@ -1,7 +1,7 @@
 import unittest
 
 from ..decorators import validate_param, validate
-from ..validators import And, Range, Validate, Not, noneValue
+from ..validators import And, Range, Validate, Not, noneValue, Is
 import pyavali
 
 
@@ -94,6 +94,31 @@ class TestComplexValidation(unittest.TestCase):
     with self.assertRaises(pyavali.ValidationFailed) as cm:
       self.other_validated_func("2")
     self.assertEquals(cm.exception.message, "validation failed for 'validated_func': argument at 1 must be integer")
+
+class TestValidatingObjectType(unittest.TestCase):
+
+  @validate("int_value", Is(int))
+  def function(self, int_value):
+    pass
+
+  @validate("int_value", Is(int, none_allowed=True))
+  def function_with_none(self, int_value):
+    pass
+
+  def test_when_object_type_is_wrong_it_raises_exception(self):
+    with self.assertRaises(pyavali.ValidationFailed) as cm:
+      self.function("2")
+    self.assertEquals(cm.exception.message, "validation failed for 'function': 'int_value' must be 'int', got type 'str'")
+
+  def test_none_raises_exception(self):
+    with self.assertRaises(pyavali.ValidationFailed) as cm:
+      self.function(None)
+    self.assertEquals(cm.exception.message, "validation failed for 'function': 'int_value' must be 'int', got type 'NoneType'")
+
+  def test_when_none_is_allowed_it_does_not_raise_exception(self):
+    self.function_with_none(None)
+
+
 
 class TestStackingValidator(unittest.TestCase):
 

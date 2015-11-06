@@ -33,6 +33,23 @@ class And(object):
        if not validator(value):
          return validator
 
+class Is(object):
+  "Validates that object is given type"
+
+  def __init__(self, expected_type, none_allowed = False, message=None):
+    self._template = Template(message or "must be '$expected_type', got type '$value_type'")
+    self._expected_type = expected_type
+    self._none_allowed = none_allowed
+
+  def __call__(self, value):
+    if self._none_allowed and value == None:
+      return True
+    return type(value) == self._expected_type
+
+  def message(self, value):
+    return self._template.safe_substitute(expected_type=self._expected_type.__name__, value_type=type(value).__name__)
+
+
 class Range(object):
   "Range validation min <= validated value <= max"
 
